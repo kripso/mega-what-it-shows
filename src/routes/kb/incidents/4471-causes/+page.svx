@@ -1,0 +1,43 @@
+---
+layout: runbook
+title: '#4471 · two date-handling causes'
+owner: kripso
+status: triaged
+reviewed: 2026-10-28
+signature: kripso
+---
+
+<script>
+  import CauseTable from '#lib/kb/CauseTable.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+</script>
+
+Ticket #4471 is not one parser bug. The export has overlapping pages, so each report ID counts
+once. A report's cause comes from its tenant's locale and booking form, not the browser-based
+intake tag.
+
+<Callout>
+Two causes need two tickets. The parser and date-hint failures need different fixes.
+</Callout>
+
+## What was merged
+
+<CauseTable ticket={4471} />
+
+## Parser: month-first reading
+
+The shared parser reads every date month first. For a day-first tenant, app, email and
+booking-v2 form reports can flip the day and month. This remains the primary cause in #4471.
+
+## Hint: contradictory format guidance
+
+The booking-v3 form prints `MM/DD/YYYY`, but reads the tenant's day-first format. Reports
+through that form are the `hint` cause, even when intake tagged them `parser`.
+
+## Triage note
+
+Reports that read as a one-day move stay with the cause supplied by tenant and form; the desk
+note does not make a third cause. Matching subjects explain the merge, not a shared root cause.
+
+<RenderStamp {signature} />
